@@ -1,5 +1,7 @@
-#include <thread>
-#include <Math/VectorUtil.h>
+// #include <Math/VectorUtil.h>
+#include <vector>
+#include <string>
+#include <memory>
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 
 namespace hh_btag{

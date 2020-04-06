@@ -1,4 +1,6 @@
 <bin name="hhBTagTest" file="hhBTagTest.cc">
-    <use name="HH-btag/">
+    <use name="HHTools/HH-btag/">
     <use name="PhysicsTools/TensorFlow"/>
+    <use name="tensorflow" />
+    <use name="tensorflow-cc" />
 </bin>

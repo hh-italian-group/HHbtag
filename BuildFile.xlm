@@ -1,11 +1,3 @@
-<use name="boost"/>
+<export><lib name="1"/></export>
 <use name="root"/>
-<use name="HHKinFit2/HHKinFit2"/>
-<use name="TauAnalysis/ClassicSVfit"/>
-<use name="TauAnalysis/SVfitTF"/>
-<use name="AnalysisTools/Core"/>
-<use name="h-tautau/Core"/>
-<use name="h-tautau/JetTools"/>
-<use name="h-tautau/Instruments"/>
 <use name="PhysicsTools/TensorFlow"/>
-<export> <lib name="1"/> </export>

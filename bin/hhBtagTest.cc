@@ -3,7 +3,7 @@
 
 // hh_btag::HH_BTag test("/afs/cern.ch/work/m/mdidomen/hh-italian/Analysis_2018/CMSSW_10_2_16/src/hh-bbtautau/Studies/python/prova_pipo_v2_par1.pb");
 
-int main
+int main()
 {
     std::cout << "Nutella" << "\n";
     // std::vector<float> jet_pt = {};

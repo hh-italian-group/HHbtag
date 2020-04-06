@@ -1,4 +1,4 @@
-#include "HH-btag/include/HH_BTag.h"
+#include "../include/HH_BTag.h"
 
 namespace hh_btag{
 

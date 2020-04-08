@@ -1,7 +1,5 @@
-// #include <Math/VectorUtil.h>
 #include <vector>
 #include <string>
-#include <memory>
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 
 namespace hh_btag{
@@ -18,13 +16,13 @@ public:
     HH_BTag(const std::string& model);
     ~HH_BTag();
 
-    std::vector<float> GetScore(const std::vector<float>& jet_valid,
-                                const std::vector<float>& jet_pt, const std::vector<float>& jet_eta,
-                                 const std::vector<float>& rel_jet_M_pt, const std::vector<float>& rel_jet_E_pt,
-                                 const std::vector<float>& jet_htt_deta, const std::vector<float>& jet_deepFlavour,
-                                 const std::vector<float>& jet_htt_dphi, const float& sample_year, const float& channelId,
-                                 const float& htt_pt, const float& htt_eta, const float& htt_met_dphi,
-                                 const float& rel_met_pt_htt_pt, float& htt_scalar_pt, int jet_size);
+    std::vector<float> GetScore(const std::vector<float>& jet_valid, const std::vector<float>& jet_pt,
+                                const std::vector<float>& jet_eta, const std::vector<float>& rel_jet_M_pt,
+                                const std::vector<float>& rel_jet_E_pt, const std::vector<float>& jet_htt_deta,
+                                const std::vector<float>& jet_deepFlavour, const std::vector<float>& jet_htt_dphi,
+                                const float& sample_year, const float& channelId, const float& htt_pt,
+                                const float& htt_eta, const float& htt_met_dphi, const float& rel_met_pt_htt_pt,
+                                float& htt_scalar_pt);
 
 private:
     float number_of_var;

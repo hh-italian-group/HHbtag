@@ -1,5 +1,4 @@
 #include "../interface/HH_BTag.h"
-#include <typeinfo>
 
 namespace hh_btag{
 
@@ -11,12 +10,12 @@ HH_BTag::HH_BTag(const std::string& model): graph(tensorflow::loadGraphDef(model
     output_layer = graph->node(graph->node_size() - 1).name();
 }
     std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_valid, const std::vector<float>& jet_pt,
-                                         const std::vector<float>& jet_eta,
-                                         const std::vector<float>& rel_jet_M_pt, const std::vector<float>& rel_jet_E_pt,
-                                         const std::vector<float>& jet_htt_deta, const std::vector<float>& jet_deepFlavour,
-                                         const std::vector<float>& jet_htt_dphi, const float& sample_year, const float& channelId,
-                                         const float& htt_pt, const float& htt_eta, const float& htt_met_dphi,
-                                         const float& rel_met_pt_htt_pt, float& htt_scalar_pt, int jet_size)
+                                         const std::vector<float>& jet_eta, const std::vector<float>& rel_jet_M_pt,
+                                         const std::vector<float>& rel_jet_E_pt, const std::vector<float>& jet_htt_deta,
+                                         const std::vector<float>& jet_deepFlavour, const std::vector<float>& jet_htt_dphi,
+                                         const float& sample_year, const float& channelId, const float& htt_pt,
+                                         const float& htt_eta, const float& htt_met_dphi, const float& rel_met_pt_htt_pt,
+                                         float& htt_scalar_pt)
     {
 
         x = std::make_shared<tensorflow::Tensor>(tensorflow::DT_FLOAT, tensorflow::TensorShape{1, 10, 15});
@@ -24,7 +23,7 @@ HH_BTag::HH_BTag(const std::string& model): graph(tensorflow::loadGraphDef(model
 
         std::vector<float> scores = {};
 
-        for (int n_jet = 0; n_jet < std::min(jet_size, 10); n_jet++) {
+        for (int n_jet = 0; n_jet < std::min(static_cast<int>(jet_pt.size()), 10); n_jet++) {
             x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_valid) = jet_pt.at(n_jet);
             x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_pt) = jet_pt.at(n_jet);
             x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_eta) = jet_eta.at(n_jet);
@@ -42,27 +41,12 @@ HH_BTag::HH_BTag(const std::string& model): graph(tensorflow::loadGraphDef(model
             x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_scalar_pt) = htt_scalar_pt;
         }
         std::vector<tensorflow::Tensor> pred_vec;
-
-        auto shape_input =  graph->node().Get(0).attr().at("shape").shape() ;
-        for (int i = 0; i < shape_input.dim_size(); i++) {
-            std::cout << "input = "<<shape_input.dim(i).size()<<std::endl;
-        }
-        std::cout << "graph->node_size()=" << graph->node_size() << "\n";
-        // auto shape =  graph->node().Get(graph->node_size()).attr().at("shape").shape() ;
-        // for (int i = 0; i < shape.dim_size(); i++) {
-        //     std::cout << "output =" << shape.dim(i).size()<<std::endl;
-        // }
-
         tensorflow::run(session, { { input_layer, *x } }, { output_layer }, &pred_vec);
 
-
-        for (int n_jet = 0; n_jet < std::min(jet_size, 10); n_jet++) {
-            std::cout << "n_jet = " <<  n_jet<< "\n";
-            const float pred = pred_vec[n_jet].flat<float>()(1);
-            std::cout << "n = " << n_jet << ", score = " <<  pred << "\n";
+        for (int n_jet = 0; n_jet < std::min(static_cast<int>(jet_pt.size()), 10); n_jet++) {
+            const float pred = pred_vec.at(0).matrix<float>()(0, n_jet);
             scores.push_back(pred);
         }
-        std::cout << "size of scores = " << scores.size()  << "\n";
         return scores;
     }
     HH_BTag::~HH_BTag()

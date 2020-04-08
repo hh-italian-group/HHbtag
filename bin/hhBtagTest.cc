@@ -1,6 +1,4 @@
 #include "../interface/HH_BTag.h"
-#include <iostream>
-
 
 int main()
 {
@@ -24,13 +22,6 @@ int main()
     float htt_met_dphi = 3;
     float rel_met_pt_htt_pt = 2;
     auto scores = test.HH_BTag::GetScore(jet_pt, jet_pt, jet_eta, rel_jet_M_pt, rel_jet_E_pt, jet_htt_deta,
-                                           jet_deepFlavour, jet_htt_dphi, sample_year, channelId, htt_pt, htt_eta, htt_met_dphi,
-                                           rel_met_pt_htt_pt, htt_scalar_pt, 3);
-
-   // std::cout << "size of scores = " << scores.size()  << "\n";
-   // for (size_t i = 0; i < scores.size(); ++i)
-   // {
-   //     std::cout << "i = " << i << ", score = " <<  scores.at(i) << "\n";
-   // }
-
+                                         jet_deepFlavour, jet_htt_dphi, sample_year, channelId, htt_pt, htt_eta, htt_met_dphi,
+                                         rel_met_pt_htt_pt, htt_scalar_pt);
 }

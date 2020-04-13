@@ -13,8 +13,12 @@ namespace InputVars{
 
 class HH_BTag {
 public:
-    HH_BTag(const std::vector<std::string>& models);
+    static constexpr size_t n_models = 2;
+
+    HH_BTag(const std::array <std::string, n_models>& models);
     ~HH_BTag();
+
+
 
     struct NNDescriptor {
         std::unique_ptr<tensorflow::GraphDef> graph;
@@ -26,11 +30,11 @@ public:
     std::vector<float> GetScore(const std::vector<float>& jet_pt, const std::vector<float>& jet_eta,
                                 const std::vector<float>& rel_jet_M_pt, const std::vector<float>& rel_jet_E_pt,
                                 const std::vector<float>& jet_htt_deta, const std::vector<float>& jet_deepFlavour,
-                                const std::vector<float>& jet_htt_dphi, float sample_year, float channelId, float htt_pt,
+                                const std::vector<float>& jet_htt_dphi, int sample_year, int channelId, float htt_pt,
                                 float htt_eta, float htt_met_dphi, float rel_met_pt_htt_pt,
                                 float htt_scalar_pt, int parity);
 
 private:
-    std::array<NNDescriptor, 2> nn_descs;
+    std::array<NNDescriptor, n_models> nn_descs;
 };
 }// namespace hh_btag

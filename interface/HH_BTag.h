@@ -13,24 +13,24 @@ namespace InputVars{
 
 class HH_BTag {
 public:
-    HH_BTag(const std::string& model);
+    HH_BTag(const std::vector<std::string>& models);
     ~HH_BTag();
 
-    std::vector<float> GetScore(const std::vector<float>& jet_valid, const std::vector<float>& jet_pt,
-                                const std::vector<float>& jet_eta, const std::vector<float>& rel_jet_M_pt,
-                                const std::vector<float>& rel_jet_E_pt, const std::vector<float>& jet_htt_deta,
-                                const std::vector<float>& jet_deepFlavour, const std::vector<float>& jet_htt_dphi,
-                                const float& sample_year, const float& channelId, const float& htt_pt,
-                                const float& htt_eta, const float& htt_met_dphi, const float& rel_met_pt_htt_pt,
-                                float& htt_scalar_pt);
+    struct NNDescriptor {
+        std::unique_ptr<tensorflow::GraphDef> graph;
+        tensorflow::Session* session;
+        std::string input_layer;
+        std::string output_layer;
+    };
+
+    std::vector<float> GetScore(const std::vector<float>& jet_pt, const std::vector<float>& jet_eta,
+                                const std::vector<float>& rel_jet_M_pt, const std::vector<float>& rel_jet_E_pt,
+                                const std::vector<float>& jet_htt_deta, const std::vector<float>& jet_deepFlavour,
+                                const std::vector<float>& jet_htt_dphi, float sample_year, float channelId, float htt_pt,
+                                float htt_eta, float htt_met_dphi, float rel_met_pt_htt_pt,
+                                float htt_scalar_pt, int parity);
 
 private:
-    float number_of_var;
-    std::string input_layer;
-    std::string output_layer;
-    std::shared_ptr<tensorflow::GraphDef> graph;
-    tensorflow::Session* session;
-    std::shared_ptr<tensorflow::Tensor> x;
-
+    std::array<NNDescriptor, 2> nn_descs;
 };
 }// namespace hh_btag

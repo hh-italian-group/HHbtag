@@ -2,56 +2,60 @@
 
 namespace hh_btag{
 
-HH_BTag::HH_BTag(const std::string& model): graph(tensorflow::loadGraphDef(model)), session(tensorflow::createSession(graph.get()))
+HH_BTag::HH_BTag(const std::vector<std::string>& models)
 {
-    number_of_var = 14;
+    for(size_t n = 0; n < 2; ++n) {
+        nn_descs.at(n).graph.reset(tensorflow::loadGraphDef(models.at(n)));
+        nn_descs.at(n).session = tensorflow::createSession(nn_descs.at(n).graph.get());
+        nn_descs.at(n).input_layer = nn_descs.at(n).graph->node(0).name();
+        nn_descs.at(n).output_layer = nn_descs.at(n).graph->node(nn_descs.at(n).graph->node_size() - 1).name();
+    }
 
-    input_layer = graph->node(0).name();
-    output_layer = graph->node(graph->node_size() - 1).name();
 }
-    std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_valid, const std::vector<float>& jet_pt,
-                                         const std::vector<float>& jet_eta, const std::vector<float>& rel_jet_M_pt,
-                                         const std::vector<float>& rel_jet_E_pt, const std::vector<float>& jet_htt_deta,
-                                         const std::vector<float>& jet_deepFlavour, const std::vector<float>& jet_htt_dphi,
-                                         const float& sample_year, const float& channelId, const float& htt_pt,
-                                         const float& htt_eta, const float& htt_met_dphi, const float& rel_met_pt_htt_pt,
-                                         float& htt_scalar_pt)
-    {
 
-        x = std::make_shared<tensorflow::Tensor>(tensorflow::DT_FLOAT, tensorflow::TensorShape{1, 10, 15});
-        x->flat<float>().setZero();
+std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_pt, const std::vector<float>& jet_eta,
+                                     const std::vector<float>& rel_jet_M_pt, const std::vector<float>& rel_jet_E_pt,
+                                     const std::vector<float>& jet_htt_deta, const std::vector<float>& jet_deepFlavour,
+                                     const std::vector<float>& jet_htt_dphi, float sample_year, float channelId, float htt_pt,
+                                     float htt_eta, float htt_met_dphi, float rel_met_pt_htt_pt,
+                                     float htt_scalar_pt, int parity)
+{
+    auto x = std::make_shared<tensorflow::Tensor>(tensorflow::DT_FLOAT, tensorflow::TensorShape{1, 10, 15});
+    x->flat<float>().setZero();
 
-        std::vector<float> scores = {};
-
-        for (int n_jet = 0; n_jet < std::min(static_cast<int>(jet_pt.size()), 10); n_jet++) {
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_valid) = jet_pt.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_pt) = jet_pt.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_eta) = jet_eta.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::rel_jet_M_pt) = rel_jet_M_pt.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::rel_jet_E_pt) = rel_jet_E_pt.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_htt_deta) = jet_htt_deta.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_deepFlavour) = jet_deepFlavour.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_htt_dphi) = jet_htt_dphi.at(n_jet);
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::sample_year) = sample_year;
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::channelId) = channelId;
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_pt) = htt_pt;
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_eta) = htt_eta;
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_met_dphi) = htt_met_dphi;
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::rel_met_pt_htt_pt) = rel_met_pt_htt_pt;
-            x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_scalar_pt) = htt_scalar_pt;
-        }
-        std::vector<tensorflow::Tensor> pred_vec;
-        tensorflow::run(session, { { input_layer, *x } }, { output_layer }, &pred_vec);
-
-        for (int n_jet = 0; n_jet < std::min(static_cast<int>(jet_pt.size()), 10); n_jet++) {
-            const float pred = pred_vec.at(0).matrix<float>()(0, n_jet);
-            scores.push_back(pred);
-        }
-        return scores;
+    int n_jets_evt = std::min(static_cast<int>(jet_pt.size()), 10);
+    for (int n_jet = 0; n_jet < n_jets_evt; n_jet++) {
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_valid) = 1;
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_pt) = jet_pt.at(n_jet);
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_eta) = jet_eta.at(n_jet);
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::rel_jet_M_pt) = rel_jet_M_pt.at(n_jet);
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::rel_jet_E_pt) = rel_jet_E_pt.at(n_jet);
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_htt_deta) = jet_htt_deta.at(n_jet);
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_deepFlavour) = jet_deepFlavour.at(n_jet);
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::jet_htt_dphi) = jet_htt_dphi.at(n_jet);
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::sample_year) = sample_year;
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::channelId) = channelId;
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_pt) = htt_pt;
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_eta) = htt_eta;
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_met_dphi) = htt_met_dphi;
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::rel_met_pt_htt_pt) = rel_met_pt_htt_pt;
+        x->tensor<float, 3>()(0, n_jet, InputVars::vars::htt_scalar_pt) = htt_scalar_pt;
     }
-    HH_BTag::~HH_BTag()
-    {
-        tensorflow::closeSession(session);
+    std::vector<tensorflow::Tensor> pred_vec;
+    tensorflow::run(nn_descs.at(parity).session, { { nn_descs.at(parity).input_layer, *x } },
+                    { nn_descs.at(parity).output_layer }, &pred_vec);
+
+    std::vector<float> scores = {};
+    for (int n_jet = 0; n_jet < n_jets_evt; n_jet++) {
+        const float pred = pred_vec.at(0).matrix<float>()(0, n_jet);
+        scores.push_back(pred);
     }
+    return scores;
+}
+HH_BTag::~HH_BTag()
+{
+    for(size_t n = 0; n < 2; ++n)
+        tensorflow::closeSession(nn_descs.at(n).session);
+}
 
 }// namespace hh_btag

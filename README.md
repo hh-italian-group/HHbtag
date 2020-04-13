@@ -1,5 +1,5 @@
 # HH-btag   
-Interface providing feature computation for CMS RunII HH-btag  NN to  to identify the reconstructed b-jets for the final state of hh->bbtautau
+Interface providing feature computation for CMS RunII HH-btag  NN to the identification of the reconstructed b-jets for the final state of hh->bbtautau
 
 # Installation
 

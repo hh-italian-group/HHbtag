@@ -59,7 +59,7 @@ int main()
                       0.32046267, 315.96207 )
     };
 
-    for (int i = 0; i < input_variables.size(); ++i){
+    for (int i = 0; i < static_cast<int>(input_variables.size()); ++i){
         auto scores = test.HH_BTag::GetScore(input_variables.at(i).jet_pt, input_variables.at(i).jet_eta,
                                          input_variables.at(i).rel_jet_M_pt, input_variables.at(i).rel_jet_E_pt,
                                          input_variables.at(i).jet_htt_deta, input_variables.at(i).jet_deepFlavour,

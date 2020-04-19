@@ -40,14 +40,14 @@ int main()
     };
 
     std::vector<inputVariables> input_variables = {
-        inputVariables({57.564114, 43.643867, 139.50575,  60.247746, 233.31581, 70.393974,  38.037094}, // example values from event number with parity odd
-                       {0.4898809 ,  1.7326078 ,  0.935248  ,  0.41925943, -0.03784877, -0.46906093,  0.9828494},
-                       {0.17432605, 0.20295425, 0.13147171, 0.18970183, 0.10805585, 0.14510198, 0.18137462},
-                       {1.1358674, 2.923157 , 1.4760337, 1.1055808, 1.0065333, 1.1214676, 1.5339122},
-                       {0.13648209, -1.1062448 , -0.30888504,  0.20710355,  0.66421175, 1.0954239 , -0.35648644},
-                       {0.99971014, 0.9892675 , 0.04916491, 0.04575676, 0.00776238, 0.00580782, 0.00425575},
-                       {-1.1352652 , -0.58578235, -0.90678865,  1.883052  ,  2.6213546 ,1.769499  ,  2.4972382},
-                       2016, 0, 202.34824, 0.626363, 2.5145135, 0.16836564, 229.08098 ),
+        inputVariables({345.21616 , 137.2016  ,  67.34632 , 405.96768 ,  25.621525}, // example values from event number with parity odd
+                       {0.29921052,  0.219595  ,  0.08965404, -0.02061346,  0.1756713},
+                       {0.1059498 , 0.08227845, 0.1511094 , 0.08988122, 0.24139585},
+                       {1.0504552, 1.0275075, 1.0153292, 1.0042428, 1.0437677},
+                       {0.00293145, 0.08254696, 0.21248792, 0.32275543, 0.12647067},
+                       {0.9823262 , 0.98088145, 0.01650896, 0.009126  , 0.00841168},
+                       {-2.524436 , -2.967691 ,  1.731121 ,  0.3825634,  2.2681534},
+                       2016, 2, 97.48188, 0.30214196, -2.1884985, 0.9407843, 112.31701 ),
         inputVariables({114.95624 , 157.82753 ,  20.41763 ,  22.221668}, // example values from event number with parity even
                        {-1.6304693, -2.1735725,  0.591494 ,  1.3925074},
                       {0.15912989, 0.16605657, 0.18568328, 0.19184326},
@@ -61,12 +61,13 @@ int main()
 
     for (int i = 0; i < static_cast<int>(input_variables.size()); ++i){
         auto scores = test.HH_BTag::GetScore(input_variables.at(i).jet_pt, input_variables.at(i).jet_eta,
-                                         input_variables.at(i).rel_jet_M_pt, input_variables.at(i).rel_jet_E_pt,
-                                         input_variables.at(i).jet_htt_deta, input_variables.at(i).jet_deepFlavour,
-                                         input_variables.at(i).jet_htt_dphi, input_variables.at(i).sample_year,
-                                         input_variables.at(i).channelId, input_variables.at(i).htt_pt,
-                                         input_variables.at(i).htt_eta, input_variables.at(i).htt_met_dphi,
-                                         input_variables.at(i).rel_met_pt_htt_pt, input_variables.at(i).htt_scalar_pt, 1);
+                                             input_variables.at(i).rel_jet_M_pt, input_variables.at(i).rel_jet_E_pt,
+                                             input_variables.at(i).jet_htt_deta, input_variables.at(i).jet_deepFlavour,
+                                             input_variables.at(i).jet_htt_dphi, input_variables.at(i).sample_year,
+                                             input_variables.at(i).channelId, input_variables.at(i).htt_pt,
+                                             input_variables.at(i).htt_eta, input_variables.at(i).htt_met_dphi,
+                                             input_variables.at(i).rel_met_pt_htt_pt,
+                                             input_variables.at(i).htt_scalar_pt, i);
 
          std::cout << "*************** parity " << i << " ***************" << "\n";
          for (size_t n_jet = 0; n_jet < scores.size(); ++n_jet)

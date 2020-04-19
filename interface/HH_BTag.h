@@ -14,6 +14,8 @@ namespace InputVars{
 class HH_BTag {
 public:
     static constexpr size_t n_models = 2;
+    static constexpr size_t max_n_jets = 10;
+    static constexpr size_t n_variables = 15;
 
     HH_BTag(const std::array <std::string, n_models>& models);
     ~HH_BTag();

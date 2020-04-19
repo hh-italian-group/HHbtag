@@ -20,10 +20,10 @@ std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_pt, const std
                                      float htt_eta, float htt_met_dphi, float rel_met_pt_htt_pt,
                                      float htt_scalar_pt, int parity)
 {
-    tensorflow::Tensor x(tensorflow::DT_FLOAT, tensorflow::TensorShape{1, 10, 15});
+    tensorflow::Tensor x(tensorflow::DT_FLOAT, tensorflow::TensorShape{1, HH_BTag::max_n_jets, HH_BTag::n_variables});
     x.flat<float>().setZero();
 
-    int n_jets_evt = std::min(static_cast<int>(jet_pt.size()), 10);
+    int n_jets_evt = std::min(static_cast<int>(jet_pt.size()), static_cast<int>(HH_BTag::max_n_jets));
     for (int n_jet = 0; n_jet < n_jets_evt; n_jet++) {
         x.tensor<float, 3>()(0, n_jet, InputVars::vars::jet_valid) = 1;
         x.tensor<float, 3>()(0, n_jet, InputVars::vars::jet_pt) = jet_pt.at(n_jet);
@@ -43,6 +43,7 @@ std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_pt, const std
     }
     std::vector<tensorflow::Tensor> pred_vec;
     parity = parity % n_models;
+    std::cout << " *********parity=" << parity << "\n";
     tensorflow::run(nn_descs.at(parity).session, { { nn_descs.at(parity).input_layer, x } },
                     { nn_descs.at(parity).output_layer }, &pred_vec);
 

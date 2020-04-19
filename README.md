@@ -3,11 +3,13 @@ Interface providing feature computation for CMS RunII HH-btag NN to the identifi
 
 # Installation
 
-1. cmsrel CMSSW_10_2_20
-1. cd CMSSW_10_2_20/src
-1. cmsenv
-1. git clone git@github.com:hh-italian-group/HHTools/HHbtag
-1. scram b
+```
+cmsrel CMSSW_10_2_20
+cd CMSSW_10_2_20/src
+cmsenv
+git clone git@github.com:hh-italian-group/HHbtag.git HHTools/HHbtag
+scram b
+```
 
 # Testing
 1. hhBtagTest
@@ -20,9 +22,11 @@ https://twiki.cern.ch/twiki/bin/viewauth/CMS/DoubleHiggsToBBTauTauWorkingLegacyR
 
 - The maximum number of jets considered considered is 10 for event.
 
-- The jets are ordered using the DeepFlavour score in descending order.
+- The jets must be ordered using the DeepFlavour score in descending order.
 
 - The taus are selected as specified for the baseline at the working twiki.
+
+- The range used to calculate delta phi should be between [-pi, pi]
 
 - The features used for the training are:
 
@@ -36,12 +40,12 @@ https://twiki.cern.ch/twiki/bin/viewauth/CMS/DoubleHiggsToBBTauTauWorkingLegacyR
 1. sample_year: Year of the sample (2016, 2017 or 2018)
 1. channelId: 0 - eTau, 1 - muTau, 2 tauTau
 1. htt_pt: pT of visible 4-momentum of the HTT candidate.
-1. htt_eta: pT of HTT visible 4-momentum of the HTT candidate.
+1. htt_eta: eta of HTT visible 4-momentum of the HTT candidate.
 1. htt_met_dphi: Phi between the visible 4-momentum of the HTT candidate and the MET.
 1. rel_met_pt_htt_pt: Relative MET:  MET / pT of the visible 4-momentum of the HTT candidate.
 1. htt_scalar_pt: Sum of the pT of the 2 selected taus.
 
 # Output
 
-The output of the HH-Btag interfase will be a vector with the score for each of the jets, for each event.
+The output of the HH-Btag interfase will be a vector with the score for each of the jets.
 The two jets with the highest score will be more likely to be originated from the H->bb candidate.

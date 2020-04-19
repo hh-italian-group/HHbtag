@@ -43,15 +43,13 @@ std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_pt, const std
     }
     std::vector<tensorflow::Tensor> pred_vec;
     parity = parity % n_models;
-    std::cout << " *********parity=" << parity << "\n";
     tensorflow::run(nn_descs.at(parity).session, { { nn_descs.at(parity).input_layer, x } },
                     { nn_descs.at(parity).output_layer }, &pred_vec);
 
-    std::vector<float> scores;
-    for (int n_jet = 0; n_jet < n_jets_evt; n_jet++) {
-        const float pred = pred_vec.at(0).matrix<float>()(0, n_jet);
-        scores.push_back(pred);
-    }
+    std::vector<float> scores(jet_pt.size(), 0);
+    for (int n_jet = 0; n_jet < n_jets_evt; n_jet++)
+        scores.at(n_jet) = pred_vec.at(0).matrix<float>()(0, n_jet);
+
     return scores;
 }
 HH_BTag::~HH_BTag()

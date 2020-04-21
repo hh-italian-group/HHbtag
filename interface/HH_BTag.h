@@ -23,7 +23,7 @@ public:
 
 
     struct NNDescriptor {
-        std::unique_ptr<tensorflow::GraphDef> graph;
+        std::unique_ptr<tensorflow::MetaGraphDef> graph;
         tensorflow::Session* session;
         std::string input_layer;
         std::string output_layer;
@@ -34,7 +34,7 @@ public:
                                 const std::vector<float>& jet_htt_deta, const std::vector<float>& jet_deepFlavour,
                                 const std::vector<float>& jet_htt_dphi, int sample_year, int channelId, float htt_pt,
                                 float htt_eta, float htt_met_dphi, float rel_met_pt_htt_pt,
-                                float htt_scalar_pt, int parity);
+                                float htt_scalar_pt, unsigned long long parity);
 
 private:
     std::array<NNDescriptor, n_models> nn_descs;

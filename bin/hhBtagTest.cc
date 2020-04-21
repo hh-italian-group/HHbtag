@@ -6,9 +6,8 @@ int main()
     std::array <std::string, 2> models;
     for(size_t n = 0; n < 2; ++n) {
         std::ostringstream ss_model;
-        ss_model << "HHTools/HHbtag/models/HHbtag_v1_par_" << n << ".pb";
-        std::string model = ss_model.str();
-        models.at(n) = model;
+        ss_model << "HHTools/HHbtag/models/HHbtag_v1_par_" << n;
+        models.at(n) = ss_model.str();
     }
     hh_btag::HH_BTag test(models);
 

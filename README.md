@@ -3,9 +3,9 @@ Interface providing feature computation for CMS RunII HH-btag NN to the identifi
 
 # Installation
 
-```
-cmsrel CMSSW_10_2_20
-cd CMSSW_10_2_20/src
+```sh
+cmsrel CMSSW_11_1_0_pre6 # or above
+cd CMSSW_11_1_0_pre6/src
 cmsenv
 git clone git@github.com:hh-italian-group/HHbtag.git HHTools/HHbtag
 scram b

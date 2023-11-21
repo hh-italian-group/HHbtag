@@ -23,7 +23,7 @@ public:
 
 
     struct NNDescriptor {
-        std::unique_ptr<tensorflow::MetaGraphDef> graph;
+        std::unique_ptr<tensorflow::GraphDef> graph;
         tensorflow::Session* session;
         std::string input_layer;
         std::string output_layer;

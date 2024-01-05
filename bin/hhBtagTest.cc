@@ -1,12 +1,13 @@
 #include <map>
 #include "../interface/HH_BTag.h"
 
-int main()
+int main(int argc, char *argv[])
 {
+    std:string version = "v1" // model version "v1" or "v2"
     std::array <std::string, 2> models;
     for(size_t n = 0; n < 2; ++n) {
         std::ostringstream ss_model;
-        ss_model << "HHTools/HHbtag/models/HHbtag_v1_par_" << n;
+        ss_model << "HHTools/HHbtag/models/HHbtag_" << version << "_par_" << n;
         models.at(n) = ss_model.str();
     }
     hh_btag::HH_BTag test(models);

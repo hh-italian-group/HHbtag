@@ -3,7 +3,10 @@
 
 int main(int argc, char *argv[])
 {
-    std:string version = "v1" // model version "v1" or "v2"
+    std::string version ="v1"; //default version
+    if (argc > 1) {
+        version = argv[1];
+    }
     std::array <std::string, 2> models;
     for(size_t n = 0; n < 2; ++n) {
         std::ostringstream ss_model;

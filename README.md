@@ -4,8 +4,8 @@ Interface providing feature computation for CMS RunII HH-btag NN to the identifi
 # Installation
 
 ```sh
-cmsrel CMSSW_11_1_0_pre6 # or above
-cd CMSSW_11_1_0_pre6/src
+cmsrel CMSSW_12_4_10 # or above
+cd CMSSW_12_4_10/src
 cmsenv
 git clone git@github.com:hh-italian-group/HHbtag.git HHTools/HHbtag
 scram b
@@ -49,3 +49,7 @@ https://twiki.cern.ch/twiki/bin/viewauth/CMS/DoubleHiggsToBBTauTauWorkingLegacyR
 
 The output of the HH-Btag interfase will be a vector with the score for each of the jets.
 The two jets with the highest score will be more likely to be originated from the H->bb candidate.
+
+# Model version
+v1: pre-UL samples
+v2: UL samples

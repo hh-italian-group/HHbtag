@@ -26,6 +26,11 @@ std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_pt, const std
     tensorflow::Tensor x(tensorflow::DT_FLOAT, tensorflow::TensorShape{1, HH_BTag::max_n_jets, HH_BTag::n_variables});
     x.flat<float>().setZero();
 
+    if(channelId < 0 || channelId > 2)
+        throw std::runtime_error("HH_BTag::GetScore: invalid channelId");
+    if(sample_year < 2016 || sample_year > 2018)
+        throw std::runtime_error("HH_BTag::GetScore: unknown sample_year");
+
     const size_t n_jets_evt = std::min(jet_pt.size(), HH_BTag::max_n_jets);
     for (size_t jet_index = 0; jet_index < n_jets_evt; ++jet_index) {
         const int n_jet = static_cast<int>(jet_index);

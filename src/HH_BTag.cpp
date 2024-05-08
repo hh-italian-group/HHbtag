@@ -4,9 +4,10 @@ namespace hh_btag{
 
 HH_BTag::HH_BTag(const std::array<std::string, HH_BTag::n_models>& models)
 {
+    tensorflow::Options options;
     for(size_t n = 0; n < HH_BTag::n_models; ++n) {
         nn_descs.at(n).graph.reset(tensorflow::loadMetaGraphDef(models.at(n)));
-        nn_descs.at(n).session = tensorflow::createSession(nn_descs.at(n).graph.get(), models.at(n));
+        nn_descs.at(n).session = tensorflow::createSession(nn_descs.at(n).graph.get(), models.at(n), options);
         if (models.at(n).find("v1") != std::string::npos) {
                 nn_descs.at(n).input_layer = "serving_default_input:0";
             } else if (models.at(n).find("v2") != std::string::npos) {

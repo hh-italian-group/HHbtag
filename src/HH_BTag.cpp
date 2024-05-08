@@ -1,13 +1,51 @@
 #include "../interface/HH_BTag.h"
 
+namespace tensorflow {
+    struct Options;
+}
+
+namespace {
+    inline constexpr int GetCMSSWVersion()
+    {
+        int d1 =  *(PROJECT_VERSION + 6) - '0';
+        int d2 =  *(PROJECT_VERSION + 7) - '0';
+        if(d2 >= 0 && d2 <= 9) return d1 * 10 + d2;
+        return d1;
+    }
+
+    template<typename Graph, bool>
+    struct CreateSessionImpl;
+
+    template<typename Graph>
+    struct CreateSessionImpl<Graph, false> {
+        static tensorflow::Session* Create(Graph* graph, const std::string& model_path)
+        {
+            return tensorflow::createSession(graph, model_path);
+        }
+    };
+
+    template<typename Graph>
+    struct CreateSessionImpl<Graph, true> {
+        static tensorflow::Session* Create(Graph* graph, const std::string& model_path)
+        {
+            tensorflow::Options options;
+            return tensorflow::createSession(graph, model_path, options);
+        }
+    };
+
+    tensorflow::Session* CreateSession(tensorflow::MetaGraphDef* graph, const std::string& model_path)
+    {
+        return CreateSessionImpl<tensorflow::MetaGraphDef, GetCMSSWVersion() >= 14>::Create(graph, model_path);
+    }
+}
+
 namespace hh_btag{
 
 HH_BTag::HH_BTag(const std::array<std::string, HH_BTag::n_models>& models)
 {
-    tensorflow::Options options;
     for(size_t n = 0; n < HH_BTag::n_models; ++n) {
         nn_descs.at(n).graph.reset(tensorflow::loadMetaGraphDef(models.at(n)));
-        nn_descs.at(n).session = tensorflow::createSession(nn_descs.at(n).graph.get(), models.at(n), options);
+        nn_descs.at(n).session = CreateSession(nn_descs.at(n).graph.get(), models.at(n));
         if (models.at(n).find("v1") != std::string::npos) {
                 nn_descs.at(n).input_layer = "serving_default_input:0";
             } else if (models.at(n).find("v2") != std::string::npos) {

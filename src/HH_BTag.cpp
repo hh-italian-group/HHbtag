@@ -1,4 +1,5 @@
 #include "../interface/HH_BTag.h"
+#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 
 namespace tensorflow {
     struct Options;
@@ -41,17 +42,26 @@ namespace {
 
 namespace hh_btag{
 
+struct HH_BTag::NNDescriptor {
+    std::unique_ptr<tensorflow::MetaGraphDef> graph;
+    tensorflow::Session* session;
+    std::string input_layer;
+    std::string output_layer;
+};
+
 HH_BTag::HH_BTag(const std::array<std::string, HH_BTag::n_models>& models)
 {
     for(size_t n = 0; n < HH_BTag::n_models; ++n) {
-        nn_descs.at(n).graph.reset(tensorflow::loadMetaGraphDef(models.at(n)));
-        nn_descs.at(n).session = CreateSession(nn_descs.at(n).graph.get(), models.at(n));
+        nn_descs.at(n) = std::make_unique<NNDescriptor>();
+        auto& nn_desc = *nn_descs.at(n);
+        nn_desc.graph.reset(tensorflow::loadMetaGraphDef(models.at(n)));
+        nn_desc.session = CreateSession(nn_desc.graph.get(), models.at(n));
         if (models.at(n).find("v1") != std::string::npos) {
-                nn_descs.at(n).input_layer = "serving_default_input:0";
+                nn_desc.input_layer = "serving_default_input:0";
             } else if (models.at(n).find("v2") != std::string::npos) {
-                nn_descs.at(n).input_layer = "serving_default_input_1:0";
+                nn_desc.input_layer = "serving_default_input_1:0";
             }
-        nn_descs.at(n).output_layer = "StatefulPartitionedCall:0";
+        nn_desc.output_layer = "StatefulPartitionedCall:0";
     }
 }
 
@@ -91,8 +101,8 @@ std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_pt, const std
     }
     std::vector<tensorflow::Tensor> pred_vec;
     parity = parity % n_models;
-    tensorflow::run(nn_descs.at(parity).session, { { nn_descs.at(parity).input_layer, x } },
-                    { nn_descs.at(parity).output_layer }, &pred_vec);
+    auto& nn_desc = *nn_descs.at(parity);
+    tensorflow::run(nn_desc.session, { { nn_desc.input_layer, x } }, { nn_desc.output_layer }, &pred_vec);
 
     std::vector<float> scores(jet_pt.size(), 0);
     for (size_t jet_index = 0; jet_index < n_jets_evt; ++jet_index) {
@@ -106,7 +116,7 @@ std::vector<float> HH_BTag::GetScore(const std::vector<float>& jet_pt, const std
 HH_BTag::~HH_BTag()
 {
     for(size_t n = 0; n < HH_BTag::n_models; ++n)
-        tensorflow::closeSession(nn_descs.at(n).session);
+        tensorflow::closeSession(nn_descs.at(n)->session);
 }
 
 }// namespace hh_btag

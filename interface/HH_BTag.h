@@ -1,6 +1,7 @@
-#include <vector>
+#include <array>
+#include <memory>
 #include <string>
-#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
+#include <vector>
 
 namespace hh_btag{
 
@@ -20,14 +21,7 @@ public:
     HH_BTag(const std::array <std::string, n_models>& models);
     ~HH_BTag();
 
-
-
-    struct NNDescriptor {
-        std::unique_ptr<tensorflow::MetaGraphDef> graph;
-        tensorflow::Session* session;
-        std::string input_layer;
-        std::string output_layer;
-    };
+    struct NNDescriptor;
 
     std::vector<float> GetScore(const std::vector<float>& jet_pt, const std::vector<float>& jet_eta,
                                 const std::vector<float>& rel_jet_M_pt, const std::vector<float>& rel_jet_E_pt,
@@ -37,6 +31,6 @@ public:
                                 float htt_scalar_pt, unsigned long long parity);
 
 private:
-    std::array<NNDescriptor, n_models> nn_descs;
+    std::array<std::unique_ptr<NNDescriptor>, n_models> nn_descs;
 };
-}// namespace hh_btag
+} // namespace hh_btag
